@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Mobile Legends: Bang Bang - Polished Play Store UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* CSS Variables for a clean, modern look - Consistent across designs */
+        :root {
+            --primary-bg: #f5f5f5; /* Light grey for overall background */
+            --card-bg: #ffffff;    /* White for main content cards */
+            --primary-text: #212121; /* Darker text for headings, main info */
+            --secondary-text: #616161; /* Medium grey for sub-text, descriptions */
+            --accent-blue: #2196f3; /* Bright blue for accents, links, active states */
+            --accent-green: #4caf50; /* Green for install button */
+            --star-yellow: #ffc107; /* Yellow for ratings */
+            --border-light: #e0e0e0; /* Light border for separation */
+            --shadow-light: 0 2px 4px rgba(0,0,0,0.08); /* Soft shadow for depth */
+            --shadow-medium: 0 4px 8px rgba(0,0,0,0.12); /* Slightly deeper shadow */
+        }
+
+        /* Base styles for full screen and clean typography */
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Prevents horizontal scroll */
+            -webkit-font-smoothing: antialiased;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+            line-height: 1.6;
+            font-size: 16px; /* Base font size for readability */
+        }
+
+        body {
+            overflow-y: auto; /* Allows vertical scrolling */
+        }
+
+        /* Scrollbar styling for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--primary-bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #bdbdbd;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9e9e9e;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow-light);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .top-nav .material-icons {
+            font-size: 26px;
+            color: var(--secondary-text);
+            margin-right: 16px;
+            cursor: pointer;
+            flex-shrink: 0; /* Prevents icon from shrinking */
+        }
+        .top-nav .search-bar {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            background-color: var(--primary-bg);
+            border-radius: 25px;
+            padding: 8px 12px;
+            margin-right: 12px;
+        }
+        .top-nav .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 16px;
+            color: var(--primary-text);
+            flex-grow: 1;
+            padding-left: 8px;
+        }
+        .top-nav .search-bar .material-icons {
+            margin-right: 0;
+            margin-left: 8px;
+            font-size: 22px;
+            color: var(--secondary-text);
+        }
+        .top-nav .profile-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            overflow: hidden;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .top-nav .profile-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Main Content Wrapper - Centralized and styled */
+        .app-detail-wrapper {
+            max-width: 900px; /* Max width for desktop view */
+            margin: 20px auto; /* Centers the content on larger screens */
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            padding-bottom: 20px;
+            min-height: calc(100vh - 100px); /* Ensures content fills screen height */
+            box-sizing: border-box;
+        }
+
+        /* App Header Section - Consistent alignment */
+        .app-header {
+            display: flex;
+            align-items: flex-start; /* Aligns items to the top (icon and text) */
+            padding: 24px;
+            padding-bottom: 16px;
+        }
+        .app-header .app-icon {
+            width: 90px;
+            height: 90px;
+            border-radius: 20px;
+            margin-right: 20px;
+            box-shadow: var(--shadow-light);
+            flex-shrink: 0;
+            object-fit: cover;
+        }
+        .app-details {
+            flex-grow: 1;
+            text-align: left;
+            padding-top: 2px; /* Adjusts vertical alignment to match the icon's top */
+        }
+        .app-details h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+            line-height: 1.2;
+            color: var(--primary-text);
+        }
+        .app-details .developer-info {
+            font-size: 15px;
+            color: var(--secondary-text);
+            margin: 0 0 2px 0;
+        }
+        .app-details .developer-info a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+        .app-details .developer-info a:hover {
+            text-decoration: underline;
+        }
+        .app-details .category-info {
+            font-size: 14px;
+            color: var(--secondary-text);
+            margin: 0 0 20px 0; /* Space before stats row */
+        }
+
+        /* App Stats Row - Crucial for "တစ်တန်းတည်း" layout */
+        .app-stats-row {
+            display: flex;
+            align-items: flex-start; /* Aligns top of each stat block */
+            justify-content: space-between; /* Distributes items with space between them */
+            gap: 15px; /* Adjust gap to fit neatly */
+            margin-top: 0;
+            flex-wrap: nowrap; /* Prevents wrapping on desktop */
+            padding-right: 10px; /* Small padding for right-most item to not stick to edge */
+        }
+        .app-stat-item {
+            text-align: center; /* Center content within each stat item */
+            font-size: 14px;
+            color: var(--secondary-text);
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centers content vertically within the column */
+            flex-basis: 33%; /* Each item takes roughly 1/3 of the space */
+            flex-shrink: 0; /* Prevents shrinking when space is tight */
+            min-width: 80px; /* Ensures minimum width even on smaller screens */
+        }
+        /* Specific adjustments for star rating to align better with others */
+        .app-stat-item:first-child {
+            text-align: left; /* Align rating score left for more natural look */
+            align-items: flex-start; /* Align its content to the start */
+            padding-left: 5px; /* Small push to the right for balance */
+        }
+        .app-stat-item .value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-text);
+            margin-bottom: 4px;
+            line-height: 1;
+        }
+        .app-stat-item .value.rating-score {
+            font-size: 22px; /* Rating score bigger */
+        }
+        .app-stat-item .stars {
+            display: flex;
+            align-items: center;
+            margin-top: -2px;
+            margin-bottom: 4px;
+        }
+        .app-stat-item .stars .material-icons {
+            font-size: 18px;
+            color: var(--star-yellow);
+            margin-right: 1px;
+        }
+        .app-stat-item .stars .material-icons.empty-star {
+            color: var(--border-light);
+        }
+        .app-stat-item .material-icons {
+            font-size: 24px;
+            color: var(--secondary-text);
+            margin-bottom: 4px;
+        }
+        .app-stat-item .label {
+            font-size: 12px;
+            white-space: nowrap; /* Prevents text from wrapping */
+        }
+
+        /* Install Button - Always centered and prominent */
+        .install-button-container {
+            padding: 0 24px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            text-align: center; /* Ensures button is centered */
+        }
+        .install-button {
+            display: inline-flex; /* Use inline-flex for centering with margin auto */
+            align-items: center;
+            justify-content: center;
+            background-color: var(--accent-green);
+            color: white;
+            padding: 12px 0;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            font-size: 18px;
+            font-weight: 500;
+            border: none;
+            border-radius: 28px;
+            text-decoration: none;
+            box-shadow: var(--shadow-medium);
+            transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .install-button:hover {
+            background-color: #43a047;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.18);
+            transform: translateY(-1px);
+        }
+        .install-button:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-light);
+        }
+
+        /* Tabs Section - Fixed position of tabs */
+        .tabs-container {
+            display: flex;
+            justify-content: flex-start;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 25px;
+            padding: 0 24px 8px 24px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .tabs-container::-webkit-scrollbar {
+            display: none;
+        }
+        .tab-item {
+            padding: 10px 18px;
+            color: var(--secondary-text);
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+            text-transform: uppercase;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+            margin-right: 18px;
+            transition: color 0.2s ease;
+        }
+        .tab-item:last-child {
+            margin-right: 0;
+        }
+        .tab-item:hover {
+            color: var(--primary-text);
+        }
+        .tab-item.active {
+            color: var(--accent-blue);
+        }
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -9px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--accent-blue);
+            border-radius: 2px;
+        }
+
+        /* Section Header - Consistent spacing and alignment */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 0 24px;
+        }
+        .section-header h2 {
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0;
+            color: var(--primary-text);
+        }
+        .section-header .material-icons {
+            font-size: 28px;
+            color: var(--secondary-text);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .section-header .material-icons:hover {
+            color: var(--primary-text);
+        }
+
+        /* Screenshots Carousel - Controlled scrolling and fixed item size */
+        .screenshots-carousel {
+            display: flex;
+            overflow-x: scroll;
+            -webkit-overflow-scrolling: touch;
+            padding: 0 24px 18px 24px;
+            margin-bottom: 30px;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: thin;
+            scrollbar-color: #ccc transparent;
+        }
+        .screenshots-carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+        .screenshots-carousel::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 10px;
+        }
+        .screenshots-carousel::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+        .screenshot-item {
+            flex-shrink: 0; /* Ensures items don't shrink */
+            width: 220px;
+            height: 390px;
+            margin-right: 16px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
+            scroll-snap-align: start;
+            background-color: #eee;
+            object-fit: cover;
+            transition: transform 0.2s ease;
+        }
+        .screenshot-item:last-child {
+            margin-right: 0;
+        }
+        .screenshot-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+        .screenshot-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Content Sections (What's New, Description) - Improved readability */
+        .whats-new-content, .description-content {
+            font-size: 15px;
+            color: var(--secondary-text);
+            line-height: 1.7;
+            margin-bottom: 25px;
+            padding: 0 24px;
+        }
+        .whats-new-content p {
+            margin-bottom: 12px;
+        }
+        .whats-new-content ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            padding-left: 0;
+            margin-top: 10px;
+        }
+        .whats-new-content li {
+            margin-bottom: 6px;
+        }
+        .read-more {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .read-more:hover {
+            text-decoration: underline;
+        }
+        .read-more .material-icons {
+            font-size: 18px;
+            margin-left: 4px;
+            color: var(--accent-blue);
+        }
+
+        /* Ratings & Reviews Summary - Clear and prominent */
+        .ratings-summary {
+            margin-bottom: 30px;
+            padding: 0 24px;
+        }
+        .ratings-summary .overall-rating-display {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 15px;
+        }
+        .ratings-summary .overall-rating-display .score {
+            font-size: 48px;
+            font-weight: 400;
+            margin-right: 10px;
+            color: var(--primary-text);
+        }
+        .ratings-summary .overall-rating-display .material-icons {
+            font-size: 24px;
+            color: var(--star-yellow);
+            margin-right: 2px;
+        }
+        .ratings-summary .overall-rating-display .review-count {
+            font-size: 14px;
+            color: var(--secondary-text);
+            margin-left: 10px;
+            align-self: flex-end;
+            padding-bottom: 5px;
+        }
+
+        /* Similar Apps Grid - Responsive and organized */
+        .similar-apps-grid-wrapper {
+            padding: 0 24px;
+        }
+        .similar-apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 20px 15px;
+            margin-bottom: 30px;
+        }
+        .similar-app-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+        }
+        .similar-app-item img {
+            width: 72px;
+            height: 72px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-light);
+            margin-bottom: 10px;
+            object-fit: cover;
+            transition: transform 0.2s ease;
+        }
+        .similar-app-item img:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+        .similar-app-item .app-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--primary-text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        .similar-app-item .app-rating {
+            font-size: 12px;
+            color: var(--secondary-text);
+            display: flex;
+            align-items: center;
+            margin-top: 4px;
+        }
+        .similar-app-item .app-rating .material-icons {
+            font-size: 14px;
+            color: var(--star-yellow);
+            margin-right: 2px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 24px 20px;
+            color: var(--secondary-text);
+            font-size: 12px;
+            border-top: 1px solid var(--border-light);
+            margin-top: 30px;
+            background-color: var(--card-bg);
+        }
+
+        /* --- Mobile Responsive Adjustments (for phones) --- */
+        @media (max-width: 768px) {
+            html, body {
+                font-size: 15px;
+            }
+
+            .app-detail-wrapper {
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
+                padding-bottom: 16px;
+                min-height: calc(100vh - 60px);
+            }
+
+            .top-nav {
+                padding: 10px 16px;
+            }
+            .top-nav .material-icons {
+                font-size: 24px;
+                margin-right: 12px;
+            }
+            .top-nav .search-bar {
+                padding: 7px 10px;
+                margin-right: 10px;
+            }
+            .top-nav .search-bar input {
+                font-size: 15px;
+            }
+            .top-nav .search-bar .material-icons {
+                font-size: 20px;
+            }
+            .top-nav .profile-icon {
+                width: 32px;
+                height: 32px;
+            }
+
+            .app-header {
+                padding: 20px 16px;
+                padding-bottom: 12px;
+                align-items: flex-start;
+            }
+            .app-header .app-icon {
+                width: 72px;
+                height: 72px;
+                border-radius: 16px;
+                margin-right: 16px;
+            }
+            .app-details h1 {
+                font-size: 22px;
+                margin-top: 2px;
+            }
+            .app-details .developer-info {
+                font-size: 14px;
+            }
+            .app-details .category-info {
+                font-size: 13px;
+                margin-bottom: 16px;
+            }
+
+            .app-stats-row {
+                justify-content: space-between; /* Maintain space-between for single row */
+                gap: 10px; /* Reduced gap for mobile */
+                flex-wrap: nowrap; /* Keep it on one line on mobile too */
+                padding: 0 16px; /* Adjust padding for mobile */
+            }
+            .app-stat-item {
+                flex-basis: 33%; /* Keep them roughly 1/3 each */
+                min-width: unset; /* Remove min-width to allow more flexibility */
+                max-width: 100px; /* Max width for mobile */
+            }
+            .app-stat-item:first-child {
+                padding-left: 0; /* No extra padding on first item for mobile */
+            }
+            .app-stat-item .value {
+                font-size: 16px;
+            }
+            .app-stat-item .value.rating-score {
+                font-size: 18px;
+            }
+            .app-stat-item .stars .material-icons {
+                font-size: 16px;
+            }
+            .app-stat-item .material-icons {
+                font-size: 20px;
+            }
+            .app-stat-item .label {
+                font-size: 11px;
+                white-space: normal; /* Allow label to wrap on mobile if needed */
+                word-break: break-word; /* Break long words */
+            }
+            
+            .install-button-container {
+                padding: 0 16px;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+            .install-button {
+                font-size: 16px;
+                padding: 10px 0;
+                border-radius: 24px;
+                box-shadow: var(--shadow-light);
+            }
+
+            .tabs-container {
+                padding: 0 16px 8px 16px;
+                margin-bottom: 20px;
+            }
+            .tab-item {
+                padding: 8px 14px;
+                font-size: 14px;
+                margin-right: 12px;
+            }
+            .tab-item.active::after {
+                height: 2px;
+            }
+
+            .section-header, .whats-new-content, .description-content, .ratings-summary, .similar-apps-grid-wrapper {
+                padding: 0 16px;
+                margin-bottom: 20px;
+            }
+            .section-header h2 {
+                font-size: 20px;
+            }
+            .section-header .material-icons {
+                font-size: 26px;
+            }
+
+            .screenshots-carousel {
+                padding: 0 16px 16px 16px;
+                margin-bottom: 25px;
+            }
+            .screenshot-item {
+                width: 150px;
+                height: 266px;
+                margin-right: 10px;
+                border-radius: 8px;
+            }
+            
+            .whats-new-content, .description-content {
+                font-size: 14px;
+            }
+            .read-more {
+                font-size: 14px;
+            }
+
+            .ratings-summary .overall-rating-display .score {
+                font-size: 40px;
+            }
+            .ratings-summary .overall-rating-display .material-icons {
+                font-size: 20px;
+            }
+            .ratings-summary .overall-rating-display .review-count {
+                font-size: 12px;
+            }
+
+            .similar-apps-grid {
+                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+                gap: 15px 10px;
+            }
+            .similar-app-item img {
+                width: 64px;
+                height: 64px;
+                border-radius: 14px;
+                margin-bottom: 8px;
+            }
+            .similar-app-item .app-name {
+                font-size: 12px;
+            }
+            .similar-app-item .app-rating {
+                font-size: 11px;
+            }
+            .similar-app-item .app-rating .material-icons {
+                font-size: 13px;
+            }
+
+            footer {
+                padding: 20px 16px;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-nav">
+        <i class="material-icons">arrow_back</i>
+        <div class="search-bar">
+            <i class="material-icons">search</i>
+            <input type="text" placeholder="Google Play" readonly>
+            <i class="material-icons">mic</i>
+        </div>
+        <i class="material-icons">more_vert</i>
+        <div class="profile-icon">
+            <img src="https://i.ibb.co/W4cd6Sfk/Lumii-20250721-182035493.png" alt="Profile">
+        </div>
+    </div>
+
+    <div class="app-detail-wrapper">
+        <div class="app-header">
+            <img src="https://i.ibb.co/FbHCw5nw/Lumii-20250723-023038465.png" alt="Mobile Legends Icon" class="app-icon">
+            <div class="app-details">
+                <h1>C56 Wallpaper</h1>
+                <p class="developer-info"><a href="https://pumpthako.pages.dev/" target="_blank">Pump Thako</a></p>
+                <p class="category-info">In-app purchases</p>
+
+                <div class="app-stats-row">
+                    <div class="app-stat-item">
+                        <span class="value rating-score">4.5✫ </span>
+                        <div class="stars">                                                                   
+                        </div>
+                        <span class="label">9K+</span>
+                    </div>
+                    <div class="app-stat-item">
+                        <span class="value">28K+</span>                      
+                        <span class="label">Downloads</span>
+                    </div>
+                    <div class="app-stat-item">
+                        <span class="value">12+</span>                  
+                        <span class="label">Rated For</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="install-button-container">
+            <a href="https://play.google.com/store/apps/details?id=com.mobile.legends&rdid=com.mobile.legends&feature=search_result" class="install-button">
+                INSTALL
+            </a>
+        </div>
+
+        <div class="tabs-container">
+            <div class="tab-item active" id="tab-about">About</div>
+            <div class="tab-item" id="tab-reviews">Evaluations</div>
+            <div class="tab-item" id="tab-similar">Similar</div>
+            <div class="tab-item" id="tab-data-safety">Data Security</div>
+        </div>
+
+        <div class="section-header">
+            <h2>Photos</h2>
+            <i class="material-icons">arrow_forward</i>
+        </div>
+        <div class="screenshots-carousel">
+            <div class="screenshot-item"><img src="https://i.pinimg.com/736x/bf/f8/2a/bff82a1d80542aa8cd836c25603e7f50.jpg" alt="Mobile Legends Screenshot 1"></div>
+            <div class="screenshot-item"><img src="https://i.pinimg.com/736x/ff/38/d0/ff38d08de3a7db8a8446f39c0d4884d4.jpg" alt="Mobile Legends Screenshot 2"></div>
+            <div class="screenshot-item"><img src="https://i.pinimg.com/736x/1a/63/81/1a6381933bbb6bc51630c82206e1e745.jpg" alt="Mobile Legends Screenshot 3"></div>
+            <div class="screenshot-item"><img src="https://i.pinimg.com/736x/b9/9a/02/b99a02f15822436c23421c81908db68c.jpg"></div>
+            <div class="screenshot-item"><img src="https://i.pinimg.com/736x/84/6f/8b/846f8b7dd1ac7a918fd2a3f2da8f1ada.jpg" alt="Mobile Legends Screenshot 5"></div>
+        </div>
+
+        <div class="section-header">
+            <h2>What's New in C56 Wallpaper</h2>
+            <i class="material-icons">expand_more</i>
+        </div>
+        <div class="whats-new-content">
+            <p>
+               New Content & Features for C56 Wallpaper App
+            </p>
+            <ul>
+                <li>1. Category-based Wallpaper Collections
+
+Nature Wallpapers — Forests, weather scenes, waterfalls, villages, and more
+
+Gaming Wallpapers — Mobile Legends, PUBG, Free Fire, LOL, and other popular games
+
+Abstract & Artistic Wallpapers — Digital art, 3D effects, gradient patterns
+
+Anime & Cartoon Wallpapers — Famous anime characters and cute cartoon styles
+
+Motivational Quote Wallpapers — Wallpapers with inspiring quotes and beautiful backgrounds
+</li>
+                <li>2. Daily Wallpaper Updates
+
+Automatically update with a new wallpaper every day
+
+Feature a “Wallpaper of the Day” for users to enjoy fresh content regularly
+</li>
+                <li>3. User Upload & Sharing
+
+Allow users to upload their own creative wallpapers
+
+Enable ratings and comments on wallpapers uploaded by others</li>
+                <li>4. Wallpaper Search & Filters
+
+Search by keywords, colors, and categories
+
+Popular color filters like Red, Blue, Dark, Light, Pastel, etc.</li>
+                <li>5. Download & Set Wallpaper
+
+Download wallpapers in Full HD or 4K resolution
+
+Set wallpapers directly as Lock Screen or Home Screen from within the app
+</li>
+            </ul>
+            <a href="#" class="read-more">
+                Read-more
+                <i class="material-icons">keyboard_arrow_down</i>
+            </a>
+        </div>
+
+        <div class="section-header">
+            <h2>About</h2>
+            <i class="material-icons">info_outline</i>
+        </div>
+        <div class="description-content">
+            <p>
+                Sample Wallpaper Content Ideas
+
+Wallpaper Title	Category	Description
+
+Serene Mountain View	Nature	Peaceful mountain landscape with sunrise colors.
+Mobile Legends Legends	Gaming	Popular heroes in action poses.
+Abstract Neon Glow	Abstract	Neon colors with 3D geometric shapes.
+Anime Girl Smile	Anime	Cute anime girl with bright eyes.
+Motivational Sunrise	Quotes + Nature	Sunrise background with “Keep moving forward” quote.
+            </p>
+            <p>
+                🌄 Nature Wallpapers – Descriptions
+
+1. Sunset Beach
+Experience the calm and peaceful beauty of a golden sunset by the sea.
+
+2. Rainy Forest
+Feel the refreshing vibe of nature with raindrops falling in a lush green forest.
+
+3. Moon Over the Mountains
+A quiet and dreamy night with the moon shining above the mountain tops.
+            </p>
+            <p>
+                **Key Features:**
+                <ul>
+                    <li>Difficult doesn’t mean impossible.</li>
+                    <li>Tomorrow is waiting for you.</li>
+                    <li>Stay strong – you’re tougher than you think.</li>
+                    
+                </ul>
+            </p>
+            <a href="#" class="read-more">
+                See More Details
+                <i class="material-icons">keyboard_arrow_down</i>
+            </a>
+        </div>
+
+        <div class="section-header">
+            
+            
+        </div>
+        <div class="ratings-summary">
+            <div class="overall-rating-display">
+          
+            </div>
+            </div>
+
+        <div class="similar-apps-grid-wrapper">
+            <div class="section-header">
+                <h2>Cupple Profiles</h2>
+                <i class="material-icons">arrow_forward</i>
+            </div>
+            <div class="similar-apps-grid">
+                <a href="https://i.ibb.co/4Zjf0tS5/Tik-Video-App-7493726667060432146-7.jpg" target="_blank" class="similar-app-item">
+                    <img src="https://i.ibb.co/4Zjf0tS5/Tik-Video-App-7493726667060432146-7.jpg" alt="Wild Rift Icon">
+                    <span class="app-name">C56 - PF3.9V</span>
+                    <div class="app-rating">
+                        <span>〘 4.2 〙</span>
+                        
+                    </div>
+                </a>
+                <a href="https://i.ibb.co/8gTsD6Yx/Tik-Video-App-7493493295046282504-2.jpg" target="_blank" class="similar-app-item">
+                    <img src="https://i.ibb.co/8gTsD6Yx/Tik-Video-App-7493493295046282504-2.jpg" alt="Arena of Valor Icon">
+                    <span class="app-name">C56 - PF8.2V</span>
+                    <div class="app-rating">
+                        <span>〘 4.0 〙</span>
+                    
+                    </div>
+                </a>
+                <a href="https://i.ibb.co/BK6tpcbL/Tik-Video-App-7496433341172911368-8.jpg" target="_blank" class="similar-app-item">
+                    <img src="https://i.ibb.co/BK6tpcbL/Tik-Video-App-7496433341172911368-8.jpg" alt="Honor of Kings Icon">
+                    <span class="app-name">C56 - PF6.3V</span>
+                    <div class="app-rating">
+                        <span>〘 4.1 〙</span>
+                        
+                    </div>
+                </a>
+                <a href="https://i.ibb.co/KzQzY7gP/Tik-Video-App-7456679149130894599-9.jpg" target="_blank" class="similar-app-item">
+                    <img src="https://i.ibb.co/KzQzY7gP/Tik-Video-App-7456679149130894599-9.jpg" alt="Clash Royale Icon">
+                    <span class="app-name">C56 - PF9.8V</span>
+                    <div class="app-rating">
+                        <span>〘 4.2 〙</span>
+                        
+                    </div>
+                </a>
+                <a href="https://i.ibb.co/23BgskBK/Tik-Video-App-7465535907064483080-2.jpg" target="_blank" class="similar-app-item">
+                    <img src="https://i.ibb.co/23BgskBK/Tik-Video-App-7465535907064483080-2.jpg" alt="Clash Royale Icon">
+                    <span class="app-name">C56 - PF1.7V</span>
+                    <div class="app-rating">
+                        <span>〘 4.2 〙</span>
+                        
+                    </div>
+                </a>
+                <a href="https://i.ibb.co/MkgHKGvK/Tik-Video-App-7481107840044682503-3.jpg" target="_blank" class="similar-app-item">
+                    <img src="https://i.ibb.co/MkgHKGvK/Tik-Video-App-7481107840044682503-3.jpg" alt="Heroes Arena Icon">
+                    <span class="app-name">C56 - PF0.6V</span>
+                    <div class="app-rating">
+                        <span>〘 3.8 〙</span>
+                        
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025  PumpThako - C56 Wallpaper. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // JavaScript for tab active state (functional but not changing content in this static example)
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-item');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
